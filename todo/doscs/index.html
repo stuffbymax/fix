@@ -1,0 +1,154 @@
+# Fixing XFCE4 and VRAM Issues on Gentoo Linux
+
+## Step 1: Addressing XFCE4 Session Configuration
+
+1. **Switch to TTY**
+   - Press `CTRL+ALT+F1` to open a TTY terminal.
+   - Log in with your user credentials.
+
+2. **Remove Display Manager from rc-update**
+   - Switch to the root user:
+     ```bash
+     sudo su
+     ```
+   - List available services to confirm the Display Manager name:
+     ```bash
+     ls /etc/init.d
+     ```
+   - Remove the Display Manager from startup:
+     ```bash
+     rc-update del display-manager
+     ```
+   - Stop the Display Manager:
+     ```bash
+     rc-config stop display-manager
+     ```
+
+3. **Start XFCE4**
+   - Start the XFCE4 session manually:
+     ```bash
+     startxfce4
+     ```
+
+---
+
+## Step 2: Fixing VRAM Issue
+
+1. **Switch to TTY**
+   - Press `CTRL+ALT+F2` to switch to another TTY terminal.
+   - Log in as root.
+
+2. **Check Kernel Configuration for PS3**
+   - Run the following command to check the kernel build configuration:
+     ```bash
+     USE="-X" emerge gentoo-kernel-ps3 -pv
+     ```
+   - If the output looks like this:
+     ```
+     [ebuild  N    ] sys-kernel/gentoo-kernel-ps3-<version> USE="-X" ...
+     ```
+     It indicates that the build is missing important configurations.
+
+3. **Modify `make.conf`**
+   - Open the `make.conf` file in a text editor:
+     ```bash
+     nano /etc/portage/make.conf
+     ```
+   - Add the following line at the bottom of the file:
+     ```plaintext
+     FEATURES="getbinpkg"
+     ```
+   - Save and exit the file.
+
+4. **Rebuild Kernel with Correct Flags**
+   - Re-run the kernel build command:
+     ```bash
+     USE="-X" emerge gentoo-kernel-ps3 -pv
+     ```
+
+---
+
+## Notes
+
+- If the output of the kernel build still shows issues after adding the `FEATURES="getbinpkg"` option, consider rebuilding the kernel from scratch.
+- Refer to the Gentoo Handbook for detailed instructions on kernel configuration and troubleshooting.
+
+---
+
+# Fixing XFCE4 and VRAM Issues on Gentoo Linux
+
+## Step 1: Addressing XFCE4 Session Configuration
+
+1. **Switch to TTY**
+   - Press `CTRL+ALT+F1` to open a TTY terminal.
+   - Log in with your user credentials.
+
+2. **Remove Display Manager from rc-update**
+   - Switch to the root user:
+     ```bash
+     sudo su
+     ```
+   - List available services to confirm the Display Manager name:
+     ```bash
+     ls /etc/init.d
+     ```
+   - Remove the Display Manager from startup:
+     ```bash
+     rc-update del display-manager
+     ```
+   - Stop the Display Manager:
+     ```bash
+     rc-config stop display-manager
+     ```
+
+3. **Start XFCE4**
+   - Start the XFCE4 session manually:
+     ```bash
+     startxfce4
+     ```
+
+---
+
+## Step 2: Fixing VRAM Issue
+
+1. **Switch to TTY**
+   - Press `CTRL+ALT+F2` to switch to another TTY terminal.
+   - Log in as root.
+
+2. **Check Kernel Configuration for PS3**
+   - Run the following command to check the kernel build configuration:
+     ```bash
+     USE="-X" emerge gentoo-kernel-ps3 -pv
+     ```
+   - **Evaluate Output:**
+     - If the output appears in **purple**, the package is available for installation.
+     - Run the following command to install it:
+       ```bash
+       USE="-X" emerge gentoo-kernel-ps3
+       ```
+     - Reboot the system:
+       ```bash
+       reboot
+       ```
+
+3. **If Not Purple: Build a New Package**
+   - Modify the `make.conf` file to enable binary packages:
+     ```bash
+     nano /etc/portage/make.conf
+     ```
+   - Add the following line at the bottom:
+     ```plaintext
+     FEATURES="getbinpkg"
+     ```
+   - Save and exit the file.
+   - Re-run the kernel build command:
+     ```bash
+     USE="-X" emerge gentoo-kernel-ps3 -pv
+     ```
+
+---
+
+## Notes
+
+- After installation, verify the VRAM issue is resolved.
+- If further troubleshooting is needed, consider rebuilding the kernel or consulting the Gentoo Handbook.
